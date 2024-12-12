@@ -21,54 +21,70 @@ public class Ex1 {
      */
     public static int number2Int(String num) {
         int ans = -1;
-        if(!isNumber(num)) return ans;
-        if (isDigit(num))
+        if(!isNumber(num)) return ans; // if it not in the correct format
+        if (isDigit(num)) //if num is decimal
             return Integer.parseInt(num);
 
-        String[] splitNumByBase = splitByB (num);
+        String[] splitNumByBase = splitByB (num); // split by b so we have 2 strings, one for base and one for number
         ans = 0;
         int power = 1;
         int base = Integer.parseInt(splitNumByBase[1]);
         String number = splitNumByBase[0];
         for (int i = number.length() - 1; i >= 0; i--) {
-            int digit = charToDecimal(number.charAt(i));
-            if (digit < 0 || digit >= base) {
-                return -1;
-            }
+            int digit = charToDecimal(number.charAt(i)); // convert to decimal representation, for exp '2' to 2 and 'A' to 10
             ans += digit * power;
-            power = power * base;
+            power = power * base; // increasing the power as the formula is digit*base^(n-i-1)
         }
         return ans;
     }
+
+    //convert using ascii table the char to decimal representation for exp: '2' to 2 and 'A' to 10
     public static int charToDecimal(char c) {
         if (c >= '0' && c <= '9') {
-            return (int) c - '0';
+            return (int) c - '0'; // using '0' as the starting base
         } else {
-            return (int) c - 'A' + 10;
+            return (int) c - 'A' + 10; // using 'A' as the starting base
         }
     }
+
+    //convert using ascii table the decimal representation to string,that is value is the char representation for exp: 2 to "2" and 11 to "B"
     public static String decimalToChar(int c) {
-        String base = "";
-        if (c >= 2 && c <= 16) {
-            if (c == 10) {
-                base = "A";
-            } else if (c == 11) {
-                base = "B";
-            } else if (c == 12) {
-                base = "C";
-            } else if (c == 13) {
-                base = "D";
-            } else if (c == 14) {
-                base = "E";
-            } else if (c == 15) {
-                base = "F";
-            } else if (c == 16) {
-                base = "G";
-            } else {
-                base = String.valueOf(c);
+        String decimalValue = "";
+        if (c >= 10) {
+            decimalValue =  String.valueOf((char)(c - 10 + (int)'A')); // using 'A' as the starting base
+        } else {
+            decimalValue = String.valueOf(c); // using valueOf as it return  the given int exactly in string
+        }
+
+        return decimalValue;
+    }
+
+    // the function split the given string by b so we have 2 strings, one for base and one for number
+    //the base we represent as its decimal value
+    public static String[] splitByB (String a) {
+        String[] splitNumByBase = a.split("b");
+        if(splitNumByBase.length > 1) {
+            int base = 0 ;
+            if(splitNumByBase[1].length() == 1) {
+                base = charToDecimal(splitNumByBase[1].charAt(0));
+            }
+            splitNumByBase[1] = String.valueOf(base);
+        }
+        return splitNumByBase;
+
+    }
+    // the function check if the given string contain only digit
+    // using isDigit method of Character to check if each char in the string is digit
+    public static boolean isDigit (String a) {
+        if(!a.isEmpty()){
+            for (int i = 0; i < a.length(); i++) {
+                if(!Character.isDigit(a.charAt(i))){ // using isDigit method of Character
+                    return false;
+                }
             }
         }
-        return base;
+        else return false;
+        return true;// if a isn't empty string and contain only digit
     }
 
     /**
@@ -77,61 +93,33 @@ public class Ex1 {
      * @return true iff the given String is in a number format
      */
 
-    public static String[] splitByB (String a) {
-        String[] splitNumByBase = a.split("b");
-        if(splitNumByBase.length > 1) {
-            int base = charToDecimal(splitNumByBase[1].charAt(0));
-            splitNumByBase[1] = String.valueOf(base);
-        }
-        return splitNumByBase;
-
-    }
-    public static boolean isDigit (String a) {
-        if(!a.isEmpty()){
-            for (int i = 0; i < a.length(); i++) {
-                if(!Character.isDigit(a.charAt(i))){
-                    return false;
-                }
-            }
-        }
-        else return false;
-        return true;
-    }
     public static boolean isNumber(String a) {
         boolean ans = true;
 
-        if(a==null || a.split("b").length > 2) return false;
+        if(a==null || a.split("b").length > 2)  // if a is null or the string contain more than 1 b
+            return false;
 
-        if (isDigit(a)) {
+        if (isDigit(a)) { // if a is decimal representation
             return true;
 
         }
 
-        String[] splitNumByBase = splitByB (a);
-        if (!splitNumByBase[0].isEmpty() && splitNumByBase.length==2) {
-            int base = Integer.parseInt(splitNumByBase[1]);
+        String[] splitNumByBase = splitByB (a); // split by b so we have 2 strings, one for base(in decimal representation) and one for number
+        if (!splitNumByBase[0].isEmpty() && splitNumByBase.length==2) { // if a include number and base
+            int base = Integer.parseInt(splitNumByBase[1]); // convert the string exactly to int value
             if (base <= 16 && base>=2) {
                 for (int i = 0; i < splitNumByBase[0].length(); i++) {
-                    if (!((splitNumByBase[0].charAt(i) >= '0' &&
-                            splitNumByBase[0].charAt(i) < ('0' + base)) ||
-                            (splitNumByBase[0].charAt(i) >= 'A' &&
-                                    splitNumByBase[0].charAt(i) < ('A' + base - 10))
-                    ))
+                    int digit = charToDecimal(splitNumByBase[0].charAt(i)); // convert  the digit to decimal representation
+                    if (!(digit>=0 && digit< base)) // if the digit not in the given range
                         return false;
                 }
             }
             else
-                return false;
-        }
+                return false; // if the base not correct
+        } else
+            return false; // if a doesn't include both number and base for exp "b2"
 
-        else
-            return false;
-
-
-
-
-        ////////////////////
-        return ans;
+        return ans; // if it reaches till here it mean the base is correct and each digit in number is in the correct range
     }
     /**
      * Calculate the number representation (in basis base)
@@ -143,34 +131,22 @@ public class Ex1 {
      */
     public static String int2Number(int num, int base) {
         String ans = "";
-        if ((base < 2 || base > 10) && base != 16) {
+        if (base < 2 || base > 16 || num < 0) {
             return ans;
+        }
+        if(num ==0){
+            ans = "0";
         }
         int remainder;
         while (num > 0) {
             remainder = num % base;
-            if (base == 16) {
-                if (remainder == 10) {
-                    ans += 'A';
-                } else if (remainder == 11) {
-                    ans += 'B';
-                } else if (remainder == 12) {
-                    ans += 'C';
-                } else if (remainder == 13) {
-                    ans += 'D';
-                } else if (remainder == 14) {
-                    ans += 'E';
-                } else if (remainder == 15) {
-                    ans += 'F';
-                } else {
-                    ans += remainder;
-                }
-            } else {
-                ans += remainder;
-            }
+            ans += decimalToChar(remainder); // add the reminder in it char representation
             num /= base;
         }
-        ans = new StringBuffer(ans).reverse().toString() + "b"+ decimalToChar(base);
+        ans = new StringBuffer(ans).reverse().toString(); // reverse the string because the formula to covert we should add the last reminder first and the first lat
+        if(base != 10) {
+            return ans + "b" + decimalToChar(base);
+        }
         return  ans;
 
     }
@@ -183,7 +159,7 @@ public class Ex1 {
      */
     public static boolean equals(String n1, String n2) {
         boolean ans = true;
-        ans = number2Int(n1) == number2Int(n2);
+        ans = number2Int(n1) == number2Int(n2); // covert the 2 number to decimal so we can easily compare
         return ans;
     }
 
@@ -197,27 +173,31 @@ public class Ex1 {
      */
     public static int maxIndex(String[] arr) {
         int ans = 0;
-        if ( arr == null || arr.length == 0 ) return -1; // null or empty
+        if ( arr == null || arr.length == 0 )
+            return -1; // null or empty
+       int max = number2Int(arr[ans]);
         for ( int i = 1; i < arr.length; i++ )
         {
-            if ( number2Int(arr[i]) > number2Int(arr[ans]) ) ans = i;
+            if ( number2Int(arr[i]) > max) { // comparing the current value to the max
+                ans = i;
+                max =  number2Int(arr[i]); // using parameter max so we won't call the function each time we compare when the max didn't change
+            }
         }
         return ans; // position of the first largest found
     }
 
-    public static String sumOfNumbers(String num1, String num2, int base) {
-        int intNum1 = number2Int(num1) , intNum2 = number2Int(num2);
+    // the function get 2 string, each can be in different format, convert to decimal and calculate multi/sum and return the value in the new base
+    public static String calculateNumbers(String num1, String num2, int base, char method) {
+        int intNum1 = number2Int(num1) , intNum2 = number2Int(num2); //convert each num to decimal
         String ans = "";
-        ans = int2Number(intNum1+intNum2, base);
-        return ans+"b"+decimalToChar(base);
-    }
+        if(method == '+') {
+            ans = int2Number(intNum1 + intNum2, base);
+        }
+        else if(method == '*') {
+            ans = int2Number(intNum1*intNum2, base);
+        }
+        return ans;
 
-    public static String multiOfNumbers(String num1, String num2, int base) {
-        int intNum1 = number2Int(num1) , intNum2 = number2Int(num2);
-        String ans = "";
-        ans = int2Number(intNum1*intNum2, base);
-        return ans+"b"+decimalToChar(base);
     }
-
 
 }
