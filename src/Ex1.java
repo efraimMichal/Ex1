@@ -187,13 +187,13 @@ public class Ex1 {
     }
 
     // the function get 2 string, each can be in different format, convert to decimal and calculate multi/sum and return the value in the new base
-    public static String calculateNumbers(String num1, String num2, int base, char method) {
+    public static String calculateNumbers(String num1, String num2, int base, char operator) {
         int intNum1 = number2Int(num1) , intNum2 = number2Int(num2); //convert each num to decimal
         String ans = "";
-        if(method == '+') {
+        if(operator == '+') {
             ans = int2Number(intNum1 + intNum2, base);
         }
-        else if(method == '*') {
+        else if(operator == '*') {
             ans = int2Number(intNum1*intNum2, base);
         }
         return ans;
