@@ -1,6 +1,5 @@
 import java.util.Scanner;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+// ID: 324025642
 
 /**
  * Intro2CS, Ex1 - very basic "main template"
